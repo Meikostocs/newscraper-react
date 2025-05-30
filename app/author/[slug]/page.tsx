@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAuthor } from '../../../lib/cosmic';
+import { getAuthor } from '../../../lib/api';
 import { PostList } from '../../../components/PostList';
 import { Loader } from '../../../components/Loader';
 import { Suspense } from 'react';

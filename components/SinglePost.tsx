@@ -1,26 +1,24 @@
 import React from 'react';
 import Link from 'next/link';
 import ArrowLeft from './icons/ArrowLeft';
-import { getPost, getRelatedPosts } from '../lib/cosmic';
-import SuggestedPostCard from './SuggestedPostCard';
-import Tag from './Tag';
+import { getPost } from '../lib/api';
 import AuthorAvatar from './AuthorAvatar';
 import AuthorAttribution from './AuthorAttribution';
 import { sanitize } from 'isomorphic-dompurify';
 
 export async function SinglePost({ slug }: { slug: string }) {
   const post = await getPost(slug);
-  const suggestedPosts = await getRelatedPosts(slug);
+  
   return (
     <>
-      {post && post.metadata.hero?.imgix_url && (
-        <img
-          width={1400}
-          height={720}
-          className="mb-5 h-[720px] w-full bg-no-repeat object-cover object-center"
-          src={`${post.metadata.hero?.imgix_url}?w=1400&auto=format,compression`}
-          alt={post.title}
-        />
+      {post && post.metadata.imgix_url && (
+      <img
+        width={800}
+        height={450}
+        className="mb-5 h-[450px] w-full max-w-3xl mx-auto bg-no-repeat object-cover object-center"
+        src={`${post.metadata.imgix_url}?w=800&auto=format,compression`}
+        alt={post.title}
+      />
       )}
       <main className="mx-auto flex flex-col justify-center">
         <div className="mx-auto flex w-full flex-col items-start justify-center px-4 md:flex-row">
@@ -35,7 +33,7 @@ export async function SinglePost({ slug }: { slug: string }) {
           <div className="mr-20 flex w-full max-w-3xl flex-col justify-start md:w-3/4">
             <h2>
               {!post && <div className="text-center">Post Not found</div>}
-              {post && <Link href={`/posts/${post.slug}`}>{post.title}</Link>}
+              {post && <Link href={`/posts/${encodeURIComponent(post.id)}`}>{post.title}</Link>}
             </h2>
             {post && (
               <>
@@ -44,39 +42,16 @@ export async function SinglePost({ slug }: { slug: string }) {
                     <AuthorAvatar post={post} />
                     <AuthorAttribution post={post} />
                   </div>
-                  <div className="flex select-none justify-start space-x-2 md:justify-end">
-                    {post.metadata.categories &&
-                      post.metadata.categories.map((category) => (
-                        <Tag key={category.title}>{category.title}</Tag>
-                      ))}
-                  </div>
                 </div>
                 <hr className="w-full border-t border-zinc-300 pb-8 dark:border-zinc-700" />
                 <div
+                  className="post-body"
                   dangerouslySetInnerHTML={{
-                    __html: sanitize(post.metadata.content) ?? '',
+                    __html: sanitize(post.text) ?? '',
                   }}
                 ></div>
               </>
             )}
-            <div className="mx-auto mt-8 w-full">
-              <hr className="w-full border-t border-zinc-300 pb-8 dark:border-zinc-700" />
-              {suggestedPosts && (
-                <div className="flex w-full flex-col">
-                  <h3 className="pb-3 text-xl font-semibold text-zinc-800 dark:text-zinc-200">
-                    Suggested Posts
-                  </h3>
-                  <div className="flex flex-col space-x-0 space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-                    {suggestedPosts
-                      // .filter((nextPost) => nextPost?.id !== post?.id)
-                      .slice(0, 2)
-                      .map((post) => {
-                        return <SuggestedPostCard key={post.id} post={post} />;
-                      })}
-                  </div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </main>

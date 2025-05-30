@@ -9,64 +9,37 @@ const cosmic = createBucketClient({
 });
 export default cosmic;
 
-export async function getGlobalData(): Promise<GlobalData> {
-  // Get global data
-  try {
-    const data: any = await Promise.resolve(
-      cosmic.objects
-        .findOne({
-          type: 'globals',
-          slug: 'header',
-        })
-        .props('metadata.site_title,metadata.site_tag')
-        .depth(1)
-    );
-    const siteData: GlobalData = data.object;
-    return Promise.resolve(siteData);
-  } catch (error) {
-    console.log('Oof', error);
-  }
-  return Promise.resolve({} as GlobalData);
-}
-
 export async function getAllPosts(): Promise<Post[]> {
   try {
-    // Get all posts
-    const data: any = await Promise.resolve(
-      cosmic.objects
-        .find({
-          type: 'posts',
-        })
-        .props('id,type,slug,title,metadata,created_at')
-        .depth(1)
-    );
-    const posts: Post[] = await data.objects;
-    return Promise.resolve(posts);
+    const res = await fetch('http://localhost:8000/api/posts');
+    return res.json();
   } catch (error) {
-    console.log('Oof', error);
+    console.log('Errore caricamento post:', error);
+    return [];
   }
-  return Promise.resolve([]);
 }
 
-export async function getPost(slug: string): Promise<Post> {
+export async function getPost(url: string): Promise<Article> {
   try {
-    // Get post
-    const data: any = await Promise.resolve(
-      cosmic.objects
-        .findOne({
-          type: 'posts',
-          slug,
-        })
-        .props(['id', 'type', 'slug', 'title', 'metadata', 'created_at'])
-        .depth(1)
-    );
-    const post = await data.object;
-    return post;
+    const res = await fetch('http://localhost:8000/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
   } catch (error) {
-    console.log('Oof', error);
+    console.log('Errore caricamento post:', error);
+    return {} as Article;  
   }
-  return Promise.resolve({} as Post);
 }
+
 
 export async function getRelatedPosts(slug: string): Promise<Post[]> {
   try {

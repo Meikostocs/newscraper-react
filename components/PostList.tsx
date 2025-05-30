@@ -1,5 +1,5 @@
 import PostCard from '../components/PostCard';
-import { getAllPosts, getAuthor, getAuthorPosts } from '../lib/cosmic';
+import { getAllPosts, getAuthor, getAuthorPosts } from '../lib/api';
 
 export async function PostList({ authorSlug }: { authorSlug?: string }) {
   let posts = await getAllPosts();
