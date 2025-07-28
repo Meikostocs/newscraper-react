@@ -39,38 +39,3 @@ export async function getPost(url: string): Promise<Article> {
     return {} as Article;
   }
 }
-
-export async function getRelatedPosts(slug: string): Promise<Post[]> {
-  try {
-    const data = await cosmic.objects
-      .find({
-        type: 'posts',
-        slug: { $ne: slug },
-      })
-      .props(['id', 'type', 'slug', 'title', 'metadata', 'created_at'])
-      .sort('random')
-      .depth(1);
-
-    return data.objects as Post[];
-  } catch (error) {
-    console.error('Errore fetch post correlati:', error);
-    return [];
-  }
-}
-
-export async function getAuthor(slug: string): Promise<Author> {
-  try {
-    const data = await cosmic.objects
-      .findOne({
-        type: 'authors',
-        slug,
-      })
-      .props('title,pfp')
-      .depth(1);
-
-    return data.object as Author;
-  } catch (error) {
-    console.error('Errore fetch autore:', error);
-    return {} as Author;
-  }
-}
