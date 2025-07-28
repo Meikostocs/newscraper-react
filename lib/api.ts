@@ -36,17 +36,11 @@ export async function getPost(url: string): Promise<Article> {
 }
 
 export async function downloadNewsPaper(): Promise<Blob> {
-  const response = await fetch(`${BASE_URL}/api/newspaper`, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/pdf',
-    },
-  })
+  const response = await fetch('/api/download')
 
   if (!response.ok) {
     throw new Error('Errore nel download del PDF')
   }
 
-  const blob = await response.blob()
-  return blob
+  return await response.blob()
 }
