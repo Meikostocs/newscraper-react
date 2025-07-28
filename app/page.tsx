@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 export default async function Page(): Promise<JSX.Element> {
   return (
     <main className="mx-auto mt-4 w-full max-w-3xl flex-col space-y-16 px-4 lg:px-0">
+      <title>Post</title>
       <Suspense fallback={<Loader />}>
         <PostList />
       </Suspense>

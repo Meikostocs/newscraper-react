@@ -12,8 +12,8 @@
     "isomorphic-dompurify": "^1.8.0",
     "lucide-react": "^0.427.0",
     "next": "canary",
-    "react": "19.0.0-rc-68dbd84b-20240812",
-    "react-dom": "19.0.0-rc-68dbd84b-20240812",
+    "react": "19.0.0-rc-de68d2f4-20241204",
+    "react-dom": "19.0.0-rc-de68d2f4-20241204", 
     "typescript": "^5.0.4"
   },
   "engines": {
