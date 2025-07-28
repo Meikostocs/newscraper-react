@@ -1,13 +1,8 @@
-import { createBucketClient } from '@cosmicjs/sdk';
-import { Post, GlobalData, Author, Article } from './types';
+import { Post, Article } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-const cosmic = createBucketClient({
-  bucketSlug: process.env.COSMIC_BUCKET_SLUG || '',
-  readKey: process.env.COSMIC_READ_KEY || '',
-});
-export default cosmic;
+
 
 export async function getAllPosts(): Promise<Post[]> {
   try {
@@ -38,4 +33,20 @@ export async function getPost(url: string): Promise<Article> {
     console.error('Errore caricamento post:', error);
     return {} as Article;
   }
+}
+
+export async function downloadNewsPaper(): Promise<Blob> {
+  const response = await fetch(`${BASE_URL}/api/newspaper`, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/pdf',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('Errore nel download del PDF')
+  }
+
+  const blob = await response.blob()
+  return blob
 }

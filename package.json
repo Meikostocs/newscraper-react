@@ -8,7 +8,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@cosmicjs/sdk": "^1.0.5",
     "isomorphic-dompurify": "^1.8.0",
     "lucide-react": "^0.427.0",
     "next": "canary",
