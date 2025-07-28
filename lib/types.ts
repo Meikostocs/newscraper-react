@@ -17,7 +17,29 @@ export interface Post {
       pfp?: string;
       
     };
-    text ?: string;
     teaser?: string;
   };
+}
+
+
+export interface Author{
+  title : string;
+  pfp: string;
+}
+
+export interface Article {
+  id : string
+  title: string;
+  metadata: {
+    published_date: string;
+    content?: string;
+    imgix_url?: string;
+    author?: {
+      title?: string;
+      pfp?: string;
+      
+    };
+    teaser?: string;
+  };
+  text ?: string;
 }

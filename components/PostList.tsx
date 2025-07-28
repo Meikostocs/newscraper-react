@@ -1,12 +1,11 @@
 import PostCard from '../components/PostCard';
-import { getAllPosts, getAuthor, getAuthorPosts } from '../lib/api';
+import { getAllPosts, getAuthor} from '../lib/api';
 
 export async function PostList({ authorSlug }: { authorSlug?: string }) {
   let posts = await getAllPosts();
   let author;
   if (authorSlug) {
     author = await getAuthor(authorSlug);
-    posts = await getAuthorPosts(author.id);
   }
   return (
     <>
@@ -15,7 +14,7 @@ export async function PostList({ authorSlug }: { authorSlug?: string }) {
           Posts by {author.title}
         </h1>
       )}
-      {!posts && 'You must add at least one Post to your Bucket'}
+      {!posts && 'Cannot receive posts, check backend'}
       {posts &&
         posts.map((post) => {
           return (

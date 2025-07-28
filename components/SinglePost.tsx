@@ -47,7 +47,7 @@ export async function SinglePost({ slug }: { slug: string }) {
                 <div
                   className="post-body"
                   dangerouslySetInnerHTML={{
-                    __html: sanitize(post.text) ?? '',
+                    __html: post.text ? sanitize(post.text) : '',
                   }}
                 ></div>
               </>

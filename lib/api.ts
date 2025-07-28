@@ -1,27 +1,27 @@
 import { createBucketClient } from '@cosmicjs/sdk';
-import { Post, GlobalData, Author } from './types';
+import { Post, GlobalData, Author, Article } from './types';
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 const cosmic = createBucketClient({
-  // @ts-ignore
-  bucketSlug: process.env.COSMIC_BUCKET_SLUG ?? '',
-  // @ts-ignore
-  readKey: process.env.COSMIC_READ_KEY ?? '',
+  bucketSlug: process.env.COSMIC_BUCKET_SLUG || '',
+  readKey: process.env.COSMIC_READ_KEY || '',
 });
 export default cosmic;
 
 export async function getAllPosts(): Promise<Post[]> {
   try {
-    const res = await fetch('http://localhost:8000/api/posts');
-    return res.json();
+    const res = await fetch(`${BASE_URL}/api/posts`);
+    return await res.json();
   } catch (error) {
-    console.log('Errore caricamento post:', error);
+    console.error('Errore caricamento post:', error);
     return [];
   }
 }
 
 export async function getPost(url: string): Promise<Article> {
   try {
-    const res = await fetch('http://localhost:8000/api/posts', {
+    const res = await fetch(`${BASE_URL}/api/posts`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,71 +35,42 @@ export async function getPost(url: string): Promise<Article> {
 
     return await res.json();
   } catch (error) {
-    console.log('Errore caricamento post:', error);
-    return {} as Article;  
+    console.error('Errore caricamento post:', error);
+    return {} as Article;
   }
 }
 
-
 export async function getRelatedPosts(slug: string): Promise<Post[]> {
   try {
-    // Get suggested posts
-    const data: any = await Promise.resolve(
-      cosmic.objects
-        .find({
-          type: 'posts',
-          slug: {
-            $ne: slug,
-          },
-        })
-        .props(['id', 'type', 'slug', 'title', 'metadata', 'created_at'])
-        .sort('random')
-        .depth(1)
-    );
-    const suggestedPosts: Post[] = await data.objects;
-    return Promise.resolve(suggestedPosts);
+    const data = await cosmic.objects
+      .find({
+        type: 'posts',
+        slug: { $ne: slug },
+      })
+      .props(['id', 'type', 'slug', 'title', 'metadata', 'created_at'])
+      .sort('random')
+      .depth(1);
+
+    return data.objects as Post[];
   } catch (error) {
-    console.log('Oof', error);
+    console.error('Errore fetch post correlati:', error);
+    return [];
   }
-  return Promise.resolve([]);
 }
 
 export async function getAuthor(slug: string): Promise<Author> {
   try {
-    const data: any = await Promise.resolve(
-      cosmic.objects
-        .findOne({
-          type: 'authors',
-          slug,
-        })
-        .props('id,title')
-        .depth(1)
-    );
-    const author = await data.object;
-    return Promise.resolve(author);
-  } catch (error) {
-    console.log('Oof', error);
-  }
-  return Promise.resolve({} as Author);
-}
+    const data = await cosmic.objects
+      .findOne({
+        type: 'authors',
+        slug,
+      })
+      .props('title,pfp')
+      .depth(1);
 
-export async function getAuthorPosts(id: string): Promise<Post[]> {
-  try {
-    // Get Author's posts
-    const data: any = await Promise.resolve(
-      cosmic.objects
-        .find({
-          type: 'posts',
-          'metadata.author': id,
-        })
-        .props(['id', 'type', 'slug', 'title', 'metadata', 'created_at'])
-        .sort('random')
-        .depth(1)
-    );
-    const authorPosts: Post[] = await data.objects;
-    return Promise.resolve(authorPosts);
+    return data.object as Author;
   } catch (error) {
-    console.log('Oof', error);
+    console.error('Errore fetch autore:', error);
+    return {} as Author;
   }
-  return Promise.resolve([]);
 }

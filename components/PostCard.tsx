@@ -30,7 +30,7 @@ export default function PostCard({ post }: { post: Post }) {
       <div
         className="py-6 text-zinc-500 dark:text-zinc-300"
         dangerouslySetInnerHTML={{
-          __html: sanitize(post.metadata.teaser) ?? '',
+          __html: post.metadata.teaser ? sanitize(post.metadata.teaser) : '',
         }}
       />
       <div className="flex items-center justify-between font-medium text-green-600 dark:text-green-200">
